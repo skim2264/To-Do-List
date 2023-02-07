@@ -1,0 +1,68 @@
+body {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-template-areas:
+        "header header"
+        "menu disp";
+    margin: 0;
+    padding: 0;
+}
+
+li {
+    list-style-type: none;
+}
+
+/* Header */
+#header {
+    grid-area: header;
+    text-align: center;
+    background-color: #f0ece2;
+}
+
+#header h1 {
+    font-size: 50px;
+}
+
+/* menuDiv */
+#menuDiv {
+    grid-area: menu;
+    display: flex;
+    flex-direction: column;
+    padding: 20px;
+}
+
+
+/* displayDiv */
+#displayDiv {
+    grid-area: disp;
+    display: flex;
+    padding: 20px;
+}
+
+
+
+/* Forms */
+#newTaskForm {
+    display: none;
+    flex-direction: column;
+    gap: 10px;
+}
+
+#priority {
+    display: flex;
+}
+
+label[for="red"] {
+    color: red;
+    background-color: red;
+}
+
+label[for="orange"]{
+    color: orange;
+    background-color: orange;
+}
+
+label[for="green"] {
+    color: green;
+    background-color: green;
+}
