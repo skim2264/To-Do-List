@@ -14,13 +14,17 @@ function createProjectTab(projectName) {
     const projectsTabs = document.getElementById("projectsTabs");
     const div = document.createElement("div");
     div.innerHTML = `<li class="projectTab">
-    <button type="button" class="project-name-nav">${projectName}</button>
+    <button type="button" class="project-name-nav">
+        <div class="pNameTab">${projectName}</div>
+        <div class="binImg"><i class="fa-solid fa-trash-can projectBin"></i></div>
+    </button>
 </li>`
     projectsTabs.appendChild(div);
 }
 
-function deleteProjectTab(project) {
-
+function deleteProjectTab(projectName) {
+    deleteProject(projectName);
+    loadPage();
 }
 
 //Open project tab
@@ -110,12 +114,19 @@ const eventListeners = () => {
     newTaskForm.onsubmit = taskFormSubmit;
     newProjectForm.onsubmit = projectFormSubmit;
 
-    //open project Tabs - need to add click event 
-    const pTabs = document.querySelectorAll(".project-name-nav");
-    pTabs.forEach((tab) => {
-        tab.onclick = openProject;
-    });
+    //open project Tabs
+    document.addEventListener('click', function(e) {
+        if (e.target.classList.contains("pNameTab")) {
+            openProject(e);
+        }
+    })
 
+    //delete project Tab
+    document.addEventListener('click', function(e){
+        if (e.target.classList.contains("binImg")) {
+          deleteProjectTab(e.target.parentElement.firstElementChild.innerHTML);
+        } 
+      })
 
 }
 

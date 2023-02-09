@@ -31,6 +31,16 @@ li {
     padding: 20px;
 }
 
+.project-name-nav {
+    display: flex;
+    justify-content: space-between;
+    width: 150px;
+}
+
+.project-name-nav>div {
+    width: 60px;
+}
+
 
 /* displayDiv */
 #displayDiv {

@@ -9,10 +9,11 @@ function storeProject(project) {
     localStorage.setItem(project.name, JSON.stringify(project));
 }
 
-function deleteProject(project) {
+function deleteProject(projectName) {
     let projectList = getProjectList();
-    projectList.splice(projectList.indexOf(project.name), 1);
-    localStorage.removeItem(project.name);
+    projectList.splice(projectList.indexOf(projectName), 1);
+    localStorage.setItem("projects", JSON.stringify(projectList));
+    localStorage.removeItem(projectName);
 }
 
 function getProject(projectName) {
