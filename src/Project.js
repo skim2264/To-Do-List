@@ -9,26 +9,19 @@ export class Project {
     }
 
     setList(list) {
-        this.list = this;
-    }
-
-    getName() {
-        return this.name;
-    }
-
-    getList() {
-        return this.list;
+        this.list = list;
     }
 
     getTask(taskName) {
-        return this.list.find((task) => task.getName() === taskName);
+        return this.list.find((task) => {task.getName() === taskName});
     }
 
+    //manually use these functions
     addTask(newTask) {
         this.list.push(newTask);
     }
 
     deleteTask(taskName) {
-        this.list = this.list.filter((task) => task.getName() !== taskName);
+        this.list = this.list.filter((task) => {task.getName() !== taskName});
     }
 }

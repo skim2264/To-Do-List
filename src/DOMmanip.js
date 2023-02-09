@@ -1,23 +1,56 @@
 import { Project } from "./Project";
 import { Task } from "./Task";
-//create/delete tabs
-function createProjectTab(project) {
-    const projectsTabs = document.getElementById("projectsTabs");
-    const pTab = document.createElement("li");
-    pTab.classList.add("projectTab");
-    pTab.setAttribute('id', project.getName());
-    
-    const pButton = document.createElement("button");
-    pButton.classList.add("project-name-nav");
-    pButton.type = "button";
-    pButton.innerHTML = project.getName();
+import { storeProject, deleteProject, getProject, getProjectList} from "./Storage";
 
-    pTab.appendChild(pButton);
-    projectsTabs.appendChild(pTab);
+//create tabs based on storage
+function loadPage() {
+    const projectList = getProjectList();
+    const projectsTabs = document.getElementById("projectsTabs");
+    projectsTabs.replaceChildren();
+    projectList.forEach((item) => createProjectTab(item));
 }
 
-function createTaskTab(task) {
+function createProjectTab(projectName) {
+    const projectsTabs = document.getElementById("projectsTabs");
+    const div = document.createElement("div");
+    div.innerHTML = `<li class="projectTab">
+    <button type="button" class="project-name-nav">${projectName}</button>
+</li>`
+    projectsTabs.appendChild(div);
+}
+
+function deleteProjectTab(project) {
+
+}
+
+//Open project tab
+function openProject(e) {
+    const name = e.target.innerHTML;
+    const tabContentName = document.getElementById("tabContentName");
+    const tabContentList = document.getElementById("tabContentList");
+    const project = getProject(name);
+    const projectLabel = document.getElementById("projectLabel");
     
+    projectLabel.value = name;
+    tabContentName.innerHTML = name;
+    tabContentList.replaceChildren();
+    project.list.forEach((item) => {
+        const div = document.createElement("div");
+        div.innerHTML = `<li class="listItem"><i class="fa-regular fa-square"></i> ${item.name}</li>`
+        tabContentList.appendChild(div);
+
+    })
+}
+
+function loadProject(projectName, project) {
+    const tabContentList = document.getElementById("tabContentList");
+    tabContentList.replaceChildren();
+    project.list.forEach((item) => {
+        const div = document.createElement("div");
+        div.innerHTML = `<li class="listItem"><i class="fa-regular fa-square"></i> ${item.name}</li>`
+        tabContentList.appendChild(div);
+
+    })
 }
 
 //form submissions
@@ -27,17 +60,20 @@ function taskFormSubmit(e) {
     var ddate = document.getElementById("ddate").value;
     var descrip = document.getElementById("descrip").value;
     var priority = document.getElementById("priority").value;
+    var projectName = document.getElementById("projectLabel").value;
 
     const newTask = new Task(name, ddate, descrip, priority);
-    createTaskTab(newTask);
-    //store task under proper project and create page
-    //retrieve which project it is under - acces parent node
-
+    const project = getProject(projectName);
+    project.list.push(newTask);
+    storeProject(project);
+    
     /* Clear form */
     document.getElementById("tname").value = "";
     document.getElementById("ddate").value = "";
     document.getElementById("descrip").value = "";
     document.getElementById("priority").value = "";
+    toggleTaskForm();
+    loadProject(projectName, project);
 }
 
 function projectFormSubmit(e) {
@@ -45,9 +81,10 @@ function projectFormSubmit(e) {
     var name = document.getElementById("pname").value;
     const newProject = new Project(name);
 
-    createProjectTab(newProject);
-    //store the project and create tab on left
-
+    createProjectTab(newProject.name);
+    storeProject(newProject);
+    
+    document.getElementById("pname").value = "";
 }
 
 
@@ -55,18 +92,33 @@ const newTaskForm = document.getElementById("newTaskForm");
 const newProjectForm = document.getElementById("newProjectForm");
 /* Toggle new Task Form and button visibility */
 function toggleTaskForm() {
-    newTaskForm.style.display = "flex";
-    document.getElementById("newTaskButton").style.display = "none";
+    if (newTaskForm.style.display === "none") {
+        newTaskForm.style.display = "block";
+        document.getElementById("newTaskButton").style.display = "none";
+    } else {
+        newTaskForm.style.display = "none";
+        document.getElementById("newTaskButton").style.display = "block";
+    }
 }
 
 const eventListeners = () => {
+    //toggle task form visibility
     const newTaskButton = document.getElementById("newTaskButton");
-    newTaskButton.addEventListener("click", toggleTaskForm);
+    newTaskButton.onclick = toggleTaskForm;
 
+    //submit forms 
     newTaskForm.onsubmit = taskFormSubmit;
     newProjectForm.onsubmit = projectFormSubmit;
+
+    //open project Tabs - need to add click event 
+    const pTabs = document.querySelectorAll(".project-name-nav");
+    pTabs.forEach((tab) => {
+        tab.onclick = openProject;
+    });
+
+
 }
 
 
 
-export {eventListeners};
+export {eventListeners, loadPage};
