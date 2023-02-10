@@ -1,24 +1,49 @@
 export class Task{
-    constructor(name, date=null, descrip=null, priority=null) {
+    constructor(name, date=null, descrip=null, done = false, pName=null) {
         this.name = name;
         this.date = date;
         this.descrip = descrip;
-        this.priority = priority;
+        this.done = done;
+        this.pName = pName;
     }
 
-    setName(name) {
-        this.name = name;
+    set name(newName) {
+        this._name = newName;
     }
 
-    setDate(date) {
-        this.date = date;
+    set date(newDate) {
+        this._date = newDate;
     }
 
-    setDescrip(descrip) {
-        this.descrip = descrip;
+    set descrip(newDescrip) {
+        this._descrip = newDescrip;
     }
 
-    setPriority(priority) {
-        this.priority = priority;
+    set done(newDone) {
+        this._done = newDone;
+    }
+
+    set pName(newpName) {
+        this._pName = newpName;
+    }
+
+    get name() {
+        return this._name;
+    }
+
+    get date() {
+        return this._date;
+    }
+
+    get descrip() {
+        return this._descrip;
+    }
+
+    get done() {
+        return this._done;
+    }
+
+    get pName() {
+        return this._pName;
     }
 };

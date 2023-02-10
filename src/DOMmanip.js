@@ -14,24 +14,29 @@ function createProjectTab(projectName) {
     const projectsTabs = document.getElementById("projectsTabs");
     const div = document.createElement("div");
     div.innerHTML = `<li class="projectTab">
-    <button type="button" class="project-name-nav">
-        <div class="pNameTab">${projectName}</div>
+    <button type="button" class="project-name-nav nav-button">
+        <div class="pTabIcon">
+            <div><i class="fa-solid fa-bars"></i></div>
+            <div class="pNameTab">${projectName}</div>
+        </div>
         <div class="binImg"><i class="fa-solid fa-trash-can projectBin"></i></div>
     </button>
 </li>`
+    div.addEventListener("click", openProject);
+    div.querySelector(".binImg").addEventListener("click", deleteProjectTab);
     projectsTabs.appendChild(div);
 }
 
-function deleteProjectTab(projectName) {
+function deleteProjectTab(e) {
+    const projectName = e.target.parentElement.parentElement.parentElement.querySelector(".pNameTab").innerHTML;
     deleteProject(projectName);
     loadPage();
 }
 
 //Open project tab
 function openProject(e) {
-    const name = e.target.innerHTML;
+    const name = e.target.querySelector(".pNameTab").innerHTML;
     const tabContentName = document.getElementById("tabContentName");
-    const tabContentList = document.getElementById("tabContentList");
     const project = getProject(name);
     const projectLabel = document.getElementById("projectLabel");
 
@@ -42,30 +47,68 @@ function openProject(e) {
     
     projectLabel.value = name;
     tabContentName.innerHTML = name;
-    tabContentList.replaceChildren();
-    project.list.forEach((item) => {
-        const div = document.createElement("div");
-        div.innerHTML = `<li class="listItem">
-            <div class="checkbox"><i class="fa-regular fa-square"></i></div>
-            ${item.name}
-            </li>`
-        tabContentList.appendChild(div);
-
-    })
+    loadProject(project);
 }
 
 function loadProject(project) {
     const tabContentList = document.getElementById("tabContentList");
     tabContentList.replaceChildren();
-    project.list.forEach((item) => {
-        const div = document.createElement("div");
-        div.innerHTML = `<li class="listItem">
-            <div class="checkbox"><i class="fa-regular fa-square"></i></div>
-            ${item.name}
-            </li>`
-        tabContentList.appendChild(div);
+    if (project._list.length != 0) {
+        project._list.forEach((item) => {
+            const div = document.createElement("div");
+            if (item._done == true) {
+                div.innerHTML = `<li class="listItem">
+                <div class="checkbox"><i class="fa-regular fa-square-check"></i></div>
+                <div>${item._name}</div>
+                <div>${item._date}</div>
+                <div><i class="fa-solid fa-xmark itemX"></i></div>
+                <div hidden>${project._name}</div>
+                </li>`
+            } else {
+                div.innerHTML = `<li class="listItem">
+                <div class="checkbox"><i class="fa-regular fa-square"></i></div>
+                <div>${item._name}</div>
+                <div>${item._date}</div>
+                <div><i class="fa-solid fa-xmark itemX"></i></div>
+                <div hidden>${project._name}</div>
+                </li>`
+            }
+            
+            div.querySelector(".checkbox").addEventListener("click", function(e) {
+                toggleCheckBox(item,e);
+            });
+            div.querySelector(".listItem").addEventListener("click", openDescription);
+            tabContentList.appendChild(div);
+    
+        })
+    }
+}
 
-    })
+//Open Description
+function openDescription(e) {
+    const projectName = e.currentTarget.lastElementChild.innerHTML;
+    const project = getProject(projectName);
+    const itemName = e.currentTarget.getElementsByTagName("div")[1].innerHTML;
+    //find task in project list
+    const task = project._list.find((task) => task._name == itemName);
+    const descrip = task._descrip;
+    const div = document.createElement("div");
+
+    if (e.currentTarget.classList.contains("descripOpen")) {
+        e.currentTarget.classList.replace("descripOpen", "descripClosed");
+        e.currentTarget.nextSibling.remove();
+    } else {
+        div.classList.add("descripDiv");
+        div.innerHTML = `${descrip}`;
+        e.currentTarget.after(div);
+
+        if (e.currentTarget.classList.contains("descripClosed")) {
+            e.currentTarget.classList.replace("descripClosed", "descripOpen");
+        } else {
+            e.currentTarget.classList.add("descripOpen");
+        }
+    }
+
 }
 
 //form submissions
@@ -74,19 +117,16 @@ function taskFormSubmit(e) {
     var name = document.getElementById("tname").value;
     var ddate = document.getElementById("ddate").value;
     var descrip = document.getElementById("descrip").value;
-    var priority = document.getElementById("priority").value;
     var projectName = document.getElementById("projectLabel").value;
 
-    const newTask = new Task(name, ddate, descrip, priority);
+    const newTask = new Task(name, ddate, descrip, false, projectName);
     const project = getProject(projectName);
-    project.list.push(newTask);
-    storeProject(project);
+    project._list.push(newTask);
     
     /* Clear form */
     document.getElementById("tname").value = "";
     document.getElementById("ddate").value = "";
     document.getElementById("descrip").value = "";
-    document.getElementById("priority").value = "";
     toggleTaskForm();
     loadProject(project);
 }
@@ -96,7 +136,7 @@ function projectFormSubmit(e) {
     var name = document.getElementById("pname").value;
     const newProject = new Project(name);
 
-    createProjectTab(newProject.name);
+    createProjectTab(name);
     storeProject(newProject);
     
     document.getElementById("pname").value = "";
@@ -116,13 +156,15 @@ function toggleTaskForm() {
     }
 }
 
-function toggleCheckBox(e) {
-    if (e.target.firstElementChild.classList.contains('fa-square')) {
-        e.target.replaceChildren();
-        e.target.innerHTML = `<i class="fa-regular fa-square-check"></i>`
-    } else if (e.target.firstElementChild.classList.contains('fa-square-check')) {
-        e.target.replaceChildren();
-        e.target.innerHTML = `<i class="fa-regular fa-square"></i>`;
+function toggleCheckBox(task,e) {
+    if (e.currentTarget.querySelector('.fa-square') != null) {
+        e.currentTarget.replaceChildren();
+        e.currentTarget.innerHTML = `<i class="fa-regular fa-square-check"></i>`;
+        task.done = true;
+    } else {
+        e.currentTarget.replaceChildren();
+        e.currentTarget.innerHTML = `<i class="fa-regular fa-square"></i>`;
+        task.done = false;
     }
     
 }
@@ -138,22 +180,6 @@ const eventListeners = () => {
     //submit forms 
     newTaskForm.onsubmit = taskFormSubmit;
     newProjectForm.onsubmit = projectFormSubmit;
-
-    document.addEventListener('click', function(e) {
-        //open project Tabs
-        if (e.target.classList.contains("pNameTab")) {
-            openProject(e);
-        } 
-        //delete project Tabs
-        else if (e.target.classList.contains("binImg")) {
-            deleteProjectTab(e.target.parentElement.firstElementChild.innerHTML);
-        } 
-        //toggle checkboxes
-        else if (e.target.classList.contains('checkbox')) {
-            toggleCheckBox(e);
-        }
-    })
-
 }
 
 

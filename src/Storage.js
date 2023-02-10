@@ -6,12 +6,13 @@ function storeProject(project) {
         projectList.push(project.name);
     }
     localStorage.setItem("projects", JSON.stringify(projectList));
-    localStorage.setItem(project.name, JSON.stringify(project));
+    localStorage.setItem(project._name, JSON.stringify(project));
 }
 
 function deleteProject(projectName) {
     let projectList = getProjectList();
     projectList.splice(projectList.indexOf(projectName), 1);
+    projectList = projectList.filter(n => n);
     localStorage.setItem("projects", JSON.stringify(projectList));
     localStorage.removeItem(projectName);
 }
@@ -27,6 +28,12 @@ function getProjectList() {
         return ["My List"];
     }
     return JSON.parse(localStorage.getItem("projects"));
+}
+
+function saveTask(task) {
+    let project = getProject(task.pName);
+    let index = project.list.indexOf(task);
+    project.list[index] = task;
 }
 
 export {storeProject, deleteProject, getProject, getProjectList};

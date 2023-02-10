@@ -1,15 +1,33 @@
 body {
     display: grid;
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: minmax(250px, 1fr) 4fr;
+    grid-template-rows: 130px auto;
     grid-template-areas:
         "header header"
         "menu disp";
     margin: 0;
     padding: 0;
+    height: 100vw;
 }
 
 li {
     list-style-type: none;
+}
+
+h2 { 
+    color: #2c2b22; 
+    font-family: 'Source Sans Pro', sans-serif; 
+    font-size: 28px; 
+    font-weight: 400; 
+    line-height: 32px; 
+}
+
+p { 
+    color: #4c4a37; 
+    font-family: 'Source Sans Pro', sans-serif; 
+    font-size: 18px; 
+    line-height: 32px; 
+    margin: 0 0 24px; 
 }
 
 /* Header */
@@ -17,11 +35,17 @@ li {
     grid-area: header;
     text-align: center;
     background-color: #f0ece2;
+    height: 100%;
 }
 
 #header h1 {
     font-size: 50px;
+    color: #7c795d; 
+    font-family: 'Trocchi', serif; 
+    font-weight: normal; 
+    line-height: 48px;
 }
+
 
 /* menuDiv */
 #menuDiv {
@@ -29,16 +53,57 @@ li {
     display: flex;
     flex-direction: column;
     padding: 20px;
+    background-color:rgb(187, 185, 171);
+    width: 100%;
+    height: 100%;
+}
+
+#projectsTabs {
+    width: 100%;
+    padding: 0;
+    margin: 0;
+    margin-top: 15px;
 }
 
 .project-name-nav {
     display: flex;
     justify-content: space-between;
-    width: 150px;
+    width: 100%;
+    appearance: none;
+    
+    background-color: transparent;
+    font-family: 'Source Sans Pro', sans-serif; 
+    color: #24292E;
+    font-size: 18px;
+    padding: 8px;
+    border-color:transparent transparent #24292E transparent ;
 }
 
-.project-name-nav>div {
-    width: 60px;
+.project-name-nav .binImg {
+    display: none;
+}
+
+.project-name-nav:hover {
+    background-color:#f0ece2;
+    border-radius: 5px;
+}
+
+.project-name-nav:hover .binImg {
+    display: block;
+}
+
+.pTabIcon {
+    display:flex;
+    width: 100%;
+}
+
+.projectTab {
+    margin-bottom: 10px;
+}
+
+.pNameTab {
+    text-align: left;
+    padding-left: 10px;
 }
 
 
@@ -46,13 +111,37 @@ li {
 #displayDiv {
     grid-area: disp;
     display: flex;
+    gap: 10px;
     padding: 20px;
     flex-direction: column;
+    width: 100%;
+    margin-left: 50px;
+}
+
+.itemX {
+    display: none;
+}
+
+.listItem:hover .itemX {
+    display: block;
+}
+
+.listItem {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 8px;
+}
+
+.listItem:hover {
+    background-color:#eeedeb;
+}
+
+.descripDiv {
+    margin-left: 35px;
 }
 
 
-
-/* Forms */
+/* Task Form */
 #newTaskForm {
     display: none;
     flex-direction: column;
@@ -68,15 +157,10 @@ li {
     justify-content: space-around;
 }
 
-#newTaskForm input[type="text"] {
+#newTaskForm input[type="text"], #newTaskForm input[type="date"] {
     width: 100%;
     margin-bottom: 20px;
     margin-top: 10px;
-}
-
-#priority {
-    display: flex;
-    margin-bottom: 20px;
 }
 
 label[for="red"] {
@@ -104,7 +188,6 @@ label[for="green"] {
   box-sizing: border-box;
   color: #24292E;
   cursor: pointer;
-  display: inline-block;
   font-family: -apple-system, system-ui, "Segoe UI", Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji";
   font-size: 14px;
   font-weight: 500;
@@ -183,3 +266,28 @@ label[for="green"] {
     color:#959DA5;
     transition: none 0s;
   }
+
+/*Inputs */
+input {
+    background-color: rgb(250, 251, 252);
+    border-color: rgb(223, 225, 230);
+    color: rgb(9, 30, 66);
+    cursor: text;
+    border-radius: 3px;
+    border-width: 2px;
+    border-style: solid;
+    box-sizing: border-box;
+    font-size: 14px;
+    transition: background-color 0.2s ease-in-out 0s, border-color 0.2s ease-in-out 0s;
+    line-height: 1.42857; 
+    padding: 8px 6px;
+    height: 36px;
+}
+
+input:hover{
+    background-color: rgb(235, 236, 240);
+}
+input:focus{
+    background-color: rgb(255, 255, 255);
+    border-color: rgb(76, 154, 255);
+}
