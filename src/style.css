@@ -151,3 +151,35 @@ label[for="green"] {
 .button-4:-webkit-details-marker {
   display: none;
 }
+
+/*cancel button */
+.button-1 {
+  appearance: none;
+  box-sizing: border-box;
+  border: none;
+  background-color: transparent;
+  text-decoration: underline;
+  color: #24292E;
+  cursor: pointer;
+  display: inline-block;
+  font-family: -apple-system, system-ui, "Segoe UI", Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji";
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 20px;
+  padding: 6px 16px;
+  position: relative;
+  transition: background-color 0.2s cubic-bezier(0.3, 0, 0.5, 1);
+  user-select: none;
+  -webkit-user-select: none;
+  touch-action: manipulation;
+}
+
+.button-1:hover {
+    text-decoration: none;
+    transition-duration: 0.1s;
+  }
+
+  .button-1:active {
+    color:#959DA5;
+    transition: none 0s;
+  }

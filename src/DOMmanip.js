@@ -34,6 +34,11 @@ function openProject(e) {
     const tabContentList = document.getElementById("tabContentList");
     const project = getProject(name);
     const projectLabel = document.getElementById("projectLabel");
+
+    if (document.getElementById("newTaskForm").style.display === "flex") {
+        document.getElementById("newTaskForm").style.display = "none";
+        document.getElementById("newTaskButton").disabled = false;
+    }
     
     projectLabel.value = name;
     tabContentName.innerHTML = name;
@@ -104,10 +109,10 @@ const newProjectForm = document.getElementById("newProjectForm");
 function toggleTaskForm() {
     if (newTaskForm.style.display === "none") {
         newTaskForm.style.display = "flex";
-        document.getElementById("newTaskButton").style.display = "none";
+        document.getElementById("newTaskButton").disabled = true;
     } else {
         newTaskForm.style.display = "none";
-        document.getElementById("newTaskButton").style.display = "flex";
+        document.getElementById("newTaskButton").disabled = false;
     }
 }
 
@@ -127,6 +132,8 @@ const eventListeners = () => {
     //toggle task form visibility
     const newTaskButton = document.getElementById("newTaskButton");
     newTaskButton.onclick = toggleTaskForm;
+    const cancelButton = document.getElementById("cancelButton");
+    cancelButton.onclick = toggleTaskForm;
 
     //submit forms 
     newTaskForm.onsubmit = taskFormSubmit;
