@@ -5,6 +5,7 @@ function storeProject(project) {
     if (!projectList.includes(project.name)) {
         projectList.push(project.name);
     }
+    projectList = projectList.filter(n => n);
     localStorage.setItem("projects", JSON.stringify(projectList));
     localStorage.setItem(project._name, JSON.stringify(project));
 }

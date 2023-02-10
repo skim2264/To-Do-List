@@ -51,6 +51,16 @@ function openProject(e) {
 }
 
 function loadProject(project) {
+    if (!document.getElementById("taskButtonDiv")) {
+        const tabContent = document.getElementById("tabContent");
+        const taskButtonDiv = document.createElement("div");
+        taskButtonDiv.id = "taskButtonDiv";
+        taskButtonDiv.innerHTML = `<button type="button" id="newTaskButton" class="button-4">+ Create a New Task</button>`;
+        tabContent.after(taskButtonDiv);
+        const newTaskButton = document.getElementById("newTaskButton");
+        newTaskButton.onclick = toggleTaskForm;
+    }
+
     const tabContentList = document.getElementById("tabContentList");
     tabContentList.replaceChildren();
     if (project._list.length != 0) {
@@ -122,6 +132,7 @@ function taskFormSubmit(e) {
     const newTask = new Task(name, ddate, descrip, false, projectName);
     const project = getProject(projectName);
     project._list.push(newTask);
+    storeProject(project);
     
     /* Clear form */
     document.getElementById("tname").value = "";
@@ -172,8 +183,6 @@ function toggleCheckBox(task,e) {
 
 const eventListeners = () => {
     //toggle task form visibility
-    const newTaskButton = document.getElementById("newTaskButton");
-    newTaskButton.onclick = toggleTaskForm;
     const cancelButton = document.getElementById("cancelButton");
     cancelButton.onclick = toggleTaskForm;
 
