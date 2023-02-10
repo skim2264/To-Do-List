@@ -40,18 +40,24 @@ function openProject(e) {
     tabContentList.replaceChildren();
     project.list.forEach((item) => {
         const div = document.createElement("div");
-        div.innerHTML = `<li class="listItem"><i class="fa-regular fa-square"></i> ${item.name}</li>`
+        div.innerHTML = `<li class="listItem">
+            <div class="checkbox"><i class="fa-regular fa-square"></i></div>
+            ${item.name}
+            </li>`
         tabContentList.appendChild(div);
 
     })
 }
 
-function loadProject(projectName, project) {
+function loadProject(project) {
     const tabContentList = document.getElementById("tabContentList");
     tabContentList.replaceChildren();
     project.list.forEach((item) => {
         const div = document.createElement("div");
-        div.innerHTML = `<li class="listItem"><i class="fa-regular fa-square"></i> ${item.name}</li>`
+        div.innerHTML = `<li class="listItem">
+            <div class="checkbox"><i class="fa-regular fa-square"></i></div>
+            ${item.name}
+            </li>`
         tabContentList.appendChild(div);
 
     })
@@ -77,7 +83,7 @@ function taskFormSubmit(e) {
     document.getElementById("descrip").value = "";
     document.getElementById("priority").value = "";
     toggleTaskForm();
-    loadProject(projectName, project);
+    loadProject(project);
 }
 
 function projectFormSubmit(e) {
@@ -97,13 +103,25 @@ const newProjectForm = document.getElementById("newProjectForm");
 /* Toggle new Task Form and button visibility */
 function toggleTaskForm() {
     if (newTaskForm.style.display === "none") {
-        newTaskForm.style.display = "block";
+        newTaskForm.style.display = "flex";
         document.getElementById("newTaskButton").style.display = "none";
     } else {
         newTaskForm.style.display = "none";
-        document.getElementById("newTaskButton").style.display = "block";
+        document.getElementById("newTaskButton").style.display = "flex";
     }
 }
+
+function toggleCheckBox(e) {
+    if (e.target.firstElementChild.classList.contains('fa-square')) {
+        e.target.replaceChildren();
+        e.target.innerHTML = `<i class="fa-regular fa-square-check"></i>`
+    } else if (e.target.firstElementChild.classList.contains('fa-square-check')) {
+        e.target.replaceChildren();
+        e.target.innerHTML = `<i class="fa-regular fa-square"></i>`;
+    }
+    
+}
+
 
 const eventListeners = () => {
     //toggle task form visibility
@@ -114,19 +132,20 @@ const eventListeners = () => {
     newTaskForm.onsubmit = taskFormSubmit;
     newProjectForm.onsubmit = projectFormSubmit;
 
-    //open project Tabs
     document.addEventListener('click', function(e) {
+        //open project Tabs
         if (e.target.classList.contains("pNameTab")) {
             openProject(e);
+        } 
+        //delete project Tabs
+        else if (e.target.classList.contains("binImg")) {
+            deleteProjectTab(e.target.parentElement.firstElementChild.innerHTML);
+        } 
+        //toggle checkboxes
+        else if (e.target.classList.contains('checkbox')) {
+            toggleCheckBox(e);
         }
     })
-
-    //delete project Tab
-    document.addEventListener('click', function(e){
-        if (e.target.classList.contains("binImg")) {
-          deleteProjectTab(e.target.parentElement.firstElementChild.innerHTML);
-        } 
-      })
 
 }
 
