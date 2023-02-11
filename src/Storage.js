@@ -32,9 +32,17 @@ function getProjectList() {
 }
 
 function saveTask(task) {
-    let project = getProject(task.pName);
-    let index = project.list.indexOf(task);
-    project.list[index] = task;
+    let project = getProject(task._pName);
+    let index = project._list.map(function(e) {return e._name;}).indexOf(task._name);
+    project._list[index] = task;
+    storeProject(project);
 }
 
-export {storeProject, deleteProject, getProject, getProjectList};
+function delTaskStorage(task) {
+    let project = getProject(task._pName);
+    let index = project._list.map(function(e) {return e._name;}).indexOf(task._name);
+    project._list.splice(index, 1);
+    storeProject(project);
+}
+
+export {storeProject, deleteProject, getProject, getProjectList, saveTask, delTaskStorage};

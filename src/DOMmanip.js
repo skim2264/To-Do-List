@@ -1,6 +1,6 @@
 import { Project } from "./Project";
 import { Task } from "./Task";
-import { storeProject, deleteProject, getProject, getProjectList} from "./Storage";
+import { storeProject, deleteProject, getProject, getProjectList, saveTask, delTaskStorage} from "./Storage";
 
 //create tabs based on storage
 function loadPage() {
@@ -13,6 +13,7 @@ function loadPage() {
 function createProjectTab(projectName) {
     const projectsTabs = document.getElementById("projectsTabs");
     const div = document.createElement("div");
+    div.classList.add("pTabDiv");
     div.innerHTML = `<li class="projectTab">
     <button type="button" class="project-name-nav nav-button">
         <div class="pTabIcon">
@@ -22,20 +23,20 @@ function createProjectTab(projectName) {
         <div class="binImg"><i class="fa-solid fa-trash-can projectBin"></i></div>
     </button>
 </li>`
-    div.addEventListener("click", openProject);
+    div.querySelector(".pTabIcon").addEventListener("click", openProject);
     div.querySelector(".binImg").addEventListener("click", deleteProjectTab);
     projectsTabs.appendChild(div);
 }
 
 function deleteProjectTab(e) {
-    const projectName = e.target.parentElement.parentElement.parentElement.querySelector(".pNameTab").innerHTML;
+    const projectName = e.currentTarget.parentElement.querySelector(".pNameTab").innerHTML;
     deleteProject(projectName);
     loadPage();
 }
 
 //Open project tab
 function openProject(e) {
-    const name = e.target.querySelector(".pNameTab").innerHTML;
+    const name = e.currentTarget.querySelector(".pNameTab").innerHTML;
     const tabContentName = document.getElementById("tabContentName");
     const project = getProject(name);
     const projectLabel = document.getElementById("projectLabel");
@@ -68,18 +69,26 @@ function loadProject(project) {
             const div = document.createElement("div");
             if (item._done == true) {
                 div.innerHTML = `<li class="listItem">
-                <div class="checkbox"><i class="fa-regular fa-square-check"></i></div>
-                <div>${item._name}</div>
-                <div>${item._date}</div>
-                <div><i class="fa-solid fa-xmark itemX"></i></div>
-                <div hidden>${project._name}</div>
+                    <div class="left">
+                        <div class="checkbox"><i class="fa-regular fa-square-check"></i></div>
+                        <div class="listItemName">${item._name}</div>
+                    </div>
+                    <div class="right">
+                        <div class="listItemDate">${item._date}</div>
+                        <div class="itemX"><i class="fa-solid fa-xmark"></i></div>
+                    </div>
+                    <div hidden>${project._name}</div>
                 </li>`
             } else {
                 div.innerHTML = `<li class="listItem">
-                <div class="checkbox"><i class="fa-regular fa-square"></i></div>
-                <div>${item._name}</div>
-                <div>${item._date}</div>
-                <div><i class="fa-solid fa-xmark itemX"></i></div>
+                <div class="left">
+                    <div class="checkbox"><i class="fa-regular fa-square"></i></div>
+                    <div class="listItemName">${item._name}</div>
+                </div>
+                <div class="right">
+                    <div class="listItemDate">${item._date}</div>
+                    <div class="itemX"><i class="fa-solid fa-xmark"></i></div>
+                </div>
                 <div hidden>${project._name}</div>
                 </li>`
             }
@@ -87,18 +96,27 @@ function loadProject(project) {
             div.querySelector(".checkbox").addEventListener("click", function(e) {
                 toggleCheckBox(item,e);
             });
-            div.querySelector(".listItem").addEventListener("click", openDescription);
+            div.querySelector(".listItemName").addEventListener("click", openDescription);
+            div.querySelector(".itemX").addEventListener("click", function(e) {
+                deleteTask(item, e);
+            });
             tabContentList.appendChild(div);
     
         })
     }
 }
 
+//delete task
+function deleteTask(task, e) {
+    e.currentTarget.parentElement.parentElement.remove();
+    delTaskStorage(task);
+}
+
 //Open Description
 function openDescription(e) {
-    const projectName = e.currentTarget.lastElementChild.innerHTML;
+    const projectName = e.currentTarget.parentElement.parentElement.lastElementChild.innerHTML;
     const project = getProject(projectName);
-    const itemName = e.currentTarget.getElementsByTagName("div")[1].innerHTML;
+    const itemName = e.currentTarget.innerHTML;
     //find task in project list
     const task = project._list.find((task) => task._name == itemName);
     const descrip = task._descrip;
@@ -106,11 +124,11 @@ function openDescription(e) {
 
     if (e.currentTarget.classList.contains("descripOpen")) {
         e.currentTarget.classList.replace("descripOpen", "descripClosed");
-        e.currentTarget.nextSibling.remove();
+        e.currentTarget.parentElement.parentElement.nextSibling.remove();
     } else {
         div.classList.add("descripDiv");
         div.innerHTML = `${descrip}`;
-        e.currentTarget.after(div);
+        e.currentTarget.parentElement.parentElement.after(div);
 
         if (e.currentTarget.classList.contains("descripClosed")) {
             e.currentTarget.classList.replace("descripClosed", "descripOpen");
@@ -171,11 +189,13 @@ function toggleCheckBox(task,e) {
     if (e.currentTarget.querySelector('.fa-square') != null) {
         e.currentTarget.replaceChildren();
         e.currentTarget.innerHTML = `<i class="fa-regular fa-square-check"></i>`;
-        task.done = true;
+        task._done = true;
+        saveTask(task);
     } else {
         e.currentTarget.replaceChildren();
         e.currentTarget.innerHTML = `<i class="fa-regular fa-square"></i>`;
-        task.done = false;
+        task._done = false;
+        saveTask(task);
     }
     
 }

@@ -1,6 +1,6 @@
 body {
     display: grid;
-    grid-template-columns: minmax(250px, 1fr) 4fr;
+    grid-template-columns: 250px 4fr;
     grid-template-rows: 130px auto;
     grid-template-areas:
         "header header"
@@ -97,6 +97,10 @@ p {
     width: 100%;
 }
 
+.pTabIcon:hover {
+    cursor: pointer;
+}
+
 .projectTab {
     margin-bottom: 10px;
 }
@@ -130,6 +134,13 @@ p {
     display: flex;
     gap: 10px;
     margin-bottom: 8px;
+    margin-right: 20px;
+    width: 50%;
+    justify-content: space-between;
+}
+
+.left, .right {
+    display: flex;
 }
 
 .listItem:hover {
@@ -138,6 +149,19 @@ p {
 
 .descripDiv {
     margin-left: 35px;
+}
+
+.checkbox {
+    margin-right: 10px;
+}
+
+.itemX {
+    margin-left: 10px;
+}
+
+.listItemName {
+    cursor: pointer;
+    min-width: 150px;
 }
 
 
@@ -291,3 +315,4 @@ input:focus{
     background-color: rgb(255, 255, 255);
     border-color: rgb(76, 154, 255);
 }
+
