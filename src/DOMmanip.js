@@ -1,6 +1,7 @@
 import { Project } from "./Project";
 import { Task } from "./Task";
 import { storeProject, deleteProject, getProject, getProjectList, saveTask, delTaskStorage} from "./Storage";
+import { format, compareAsc, isPast, isDate } from 'date-fns';
 
 //create tabs based on storage
 function loadPage() {
@@ -74,7 +75,7 @@ function loadProject(project) {
                         <div class="listItemName">${item._name}</div>
                     </div>
                     <div class="right">
-                        <div class="listItemDate">${item._date}</div>
+                        <div class="listItemDate">No Due Date</div>
                         <div class="itemX"><i class="fa-solid fa-xmark"></i></div>
                     </div>
                     <div hidden>${project._name}</div>
@@ -86,7 +87,7 @@ function loadProject(project) {
                     <div class="listItemName">${item._name}</div>
                 </div>
                 <div class="right">
-                    <div class="listItemDate">${item._date}</div>
+                    <div class="listItemDate">No Due Date</div>
                     <div class="itemX"><i class="fa-solid fa-xmark"></i></div>
                 </div>
                 <div hidden>${project._name}</div>
@@ -100,6 +101,15 @@ function loadProject(project) {
             div.querySelector(".itemX").addEventListener("click", function(e) {
                 deleteTask(item, e);
             });
+            console.log(item._date);
+            if (item._date) {
+                var dateObj = new Date(item._date);
+                div.querySelector(".listItemDate").innerHTML = `${format(dateObj, "do MMM, yyyy")}`;
+                if (isPast(dateObj)) {
+                    div.querySelector(".listItem").classList.add("pastDue");
+                }
+            }
+
             tabContentList.appendChild(div);
     
         })
@@ -170,7 +180,6 @@ function projectFormSubmit(e) {
     
     document.getElementById("pname").value = "";
 }
-
 
 const newTaskForm = document.getElementById("newTaskForm");
 const newProjectForm = document.getElementById("newProjectForm");

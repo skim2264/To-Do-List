@@ -164,6 +164,9 @@ p {
     min-width: 150px;
 }
 
+.pastDue {
+    background-color: red;
+}
 
 /* Task Form */
 #newTaskForm {
