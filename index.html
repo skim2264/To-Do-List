@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>To Do List</title>
+    <script src="main.js" defer></script>
+    
+</head>
+<body>
+    <div id="header">
+        <h1>To Do List</h1>
+    </div>
+
+    <!-- side navigation bar -->
+    <div id = "menuDiv">
+        <!-- New Project Button-->
+        <form id="newProjectForm">
+            <input type="text" name="pname" id="pname" placeholder="New Project Name">
+            <button type="submit" id="newProjectButton" class="button-4">+</button>
+        </form>
+        <!--Date tabs-->
+        <ul id="dateTabs">
+            <li id="today">
+                <button type="button" class="date-nav-tab nav-button" id="todayTab">
+                    <div><i class="fa-solid fa-calendar-day"></i></div>
+                    <div class="pNameTab">Today</div>
+                </button>
+            </li>
+            <li id="thisWeek">
+                <button type="button" class="date-nav-tab nav-button" id="weekTab">
+                    <div><i class="fa-solid fa-calendar-week"></i></div>
+                    <div class="pNameTab">This Week</div>
+                </button>
+            </li>
+        </ul>
+        <!-- Project tabs-->
+        <h2>Projects</h2>
+        <ul id="projectsTabs">
+        </ul>
+    </div>
+    <!-- Display lists/projects details -->
+    <div id="displayDiv">
+        <!-- List of tasks in Project -->
+        <div id="tabContent">
+            <h2 id="tabContentName">Welcome to your To Do List!</h2>
+            <ul id="tabContentList">
+            </ul>
+        </div>       
+
+    </div>
+
+    <!-- New List Form-->
+    <div id="newTaskForm">
+        <form action="" method="POST">
+            <label for="tname">Task Name:</label>
+            <input type="text" name="tname" id="tname" required>
+
+            <label for="ddate">Due Date</label>
+            <input type="date" name="ddate" id="ddate">
+
+            <label for="descrip">Description:</label>
+            <input type="text" name="descrip" id="descrip">
+
+            <input id="projectLabel" name="projectLabel" value = "My List" type="hidden">
+
+            <button type="submit" class="button-4">+ Add</button>
+            <button type="button" class="button-1" id="cancelButton">Cancel</button>
+        </form>
+    </div>
+</body>
+</html>
