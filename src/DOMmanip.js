@@ -104,9 +104,11 @@ function loadProject(project) {
             console.log(item._date);
             if (item._date) {
                 var dateObj = new Date(item._date);
-                div.querySelector(".listItemDate").innerHTML = `${format(dateObj, "do MMM, yyyy")}`;
+                var listItemDate = div.querySelector(".listItemDate");
+                listItemDate.innerHTML = `${format(dateObj, "do MMM, yyyy")}`;
                 if (isPast(dateObj)) {
                     div.querySelector(".listItem").classList.add("pastDue");
+                    listItemDate.insertAdjacentHTML("afterbegin", "PAST DUE   ");
                 }
             }
 
