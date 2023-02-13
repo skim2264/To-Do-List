@@ -20,6 +20,7 @@ h2 {
     font-size: 28px; 
     font-weight: 400; 
     line-height: 32px; 
+    margin-bottom: 0px;
 }
 
 p { 
@@ -58,11 +59,25 @@ p {
     height: 100%;
 }
 
-#projectsTabs {
+#projectsTabs, #dateTabs {
     width: 100%;
     padding: 0;
     margin: 0;
     margin-top: 15px;
+}
+
+.date-nav-tab {
+    display: flex;
+    justify-content: flex-start;
+    width: 100%;
+    appearance: none;
+
+    background-color: transparent;
+    font-family: 'Source Sans Pro', sans-serif; 
+    color: #24292E;
+    font-size: 18px;
+    padding: 8px;
+    border-color:transparent transparent #24292E transparent ;
 }
 
 .project-name-nav {
@@ -83,9 +98,13 @@ p {
     display: none;
 }
 
-.project-name-nav:hover {
+.project-name-nav:hover, .date-nav-tab:hover {
     background-color:#f0ece2;
     border-radius: 5px;
+}
+
+.date-nav-tab:hover {
+    cursor: pointer;
 }
 
 .project-name-nav:hover .binImg {

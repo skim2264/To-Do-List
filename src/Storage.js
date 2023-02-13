@@ -25,8 +25,10 @@ function getProject(projectName) {
 function getProjectList() {
     if (localStorage.length == 0) {
         localStorage.setItem("My List", JSON.stringify(new Project("My List")));
-        localStorage.setItem("projects", JSON.stringify(["My List"]));
-        return ["My List"];
+        localStorage.setItem("Today", JSON.stringify(new Project("Today")));
+        localStorage.setItem("This Week", JSON.stringify(new Project("This Week")));
+        localStorage.setItem("projects", JSON.stringify(["Today", "This Week", "My List"]));
+        return ["Today", "This Week", "My List"];
     }
     return JSON.parse(localStorage.getItem("projects"));
 }

@@ -1,14 +1,28 @@
 import { Project } from "./Project";
 import { Task } from "./Task";
 import { storeProject, deleteProject, getProject, getProjectList, saveTask, delTaskStorage} from "./Storage";
-import { format, compareAsc, isPast, isDate } from 'date-fns';
+import { format, compareAsc, isPast, isDate, isThisWeek, isToday, endOfToday, isSameDay } from 'date-fns';
 
 //create tabs based on storage
 function loadPage() {
     const projectList = getProjectList();
     const projectsTabs = document.getElementById("projectsTabs");
     projectsTabs.replaceChildren();
-    projectList.forEach((item) => createProjectTab(item));
+    projectList.forEach((projectName) => {
+        if(projectName !="Today" && projectName != "This Week") {
+            createProjectTab(projectName);
+        };
+    });
+    const todayTab = document.querySelector("#todayTab")
+    todayTab.addEventListener("click", function(e) {
+        makeTodayTab();
+        openProject(e);
+    });
+    const weekTab = document.querySelector("#weekTab");
+    weekTab.addEventListener("click", function(e) {
+        makeWeekTab();
+        openProject(e);
+    });
 }
 
 function createProjectTab(projectName) {
@@ -29,13 +43,69 @@ function createProjectTab(projectName) {
     projectsTabs.appendChild(div);
 }
 
+function containsObject(object, array) {
+    for (var i = 0; i < array.length; i++) {
+        var count = 0;
+        var matching = true;
+        for (var key in object) {
+            if (array[i][key] === object[key]) {
+                matching = true;
+                if (count == Object.keys(array[i]).length - 1 && matching) {
+                    return true;
+                } else {
+                    count++;
+                }
+            } else {
+                matching = false;
+
+            }
+        }
+    }
+    return false;
+}
+
+function makeTodayTab() {
+    const projectList = getProjectList();
+    const todayProject = getProject("Today");
+    projectList.forEach((projectName) => {
+        if(projectName !="Today" && projectName != "This Week") {
+            getProject(projectName)._list.forEach((task) => {
+                var date = new Date(task._date);
+                if(isToday(date) && !containsObject(task, todayProject._list)) {
+                    loadTask(getProject(projectName), task);
+                    todayProject._list.push(task);
+                };
+            });
+        }
+    });
+    storeProject(todayProject);
+}
+
+function makeWeekTab() {
+    const weekProject = getProject("This Week");
+    const projectList = getProjectList();
+    projectList.forEach((projectName) => {
+        if(projectName !="Today" && projectName != "This Week") {
+            getProject(projectName)._list.forEach((task) => {
+                var date = new Date(task._date);
+                if(isThisWeek(date) && !containsObject(task, weekProject._list)) {
+                    loadTask(getProject(projectName), task);
+                    weekProject._list.push(task);
+                };
+            });
+        }
+    });
+    storeProject(weekProject);
+}
+
+//delete Projects and their tab
 function deleteProjectTab(e) {
     const projectName = e.currentTarget.parentElement.querySelector(".pNameTab").innerHTML;
     deleteProject(projectName);
     loadPage();
 }
 
-//Open project tab
+//Open and load project tab
 function openProject(e) {
     const name = e.currentTarget.querySelector(".pNameTab").innerHTML;
     const tabContentName = document.getElementById("tabContentName");
@@ -67,50 +137,7 @@ function loadProject(project) {
     tabContentList.replaceChildren();
     if (project._list.length != 0) {
         project._list.forEach((item) => {
-            const div = document.createElement("div");
-            if (item._done == true) {
-                div.innerHTML = `<li class="listItem">
-                    <div class="left">
-                        <div class="checkbox"><i class="fa-regular fa-square-check"></i></div>
-                        <div class="listItemName">${item._name}</div>
-                    </div>
-                    <div class="right">
-                        <div class="listItemDate">No Due Date</div>
-                        <div class="itemX"><i class="fa-solid fa-xmark"></i></div>
-                    </div>
-                    <div hidden>${project._name}</div>
-                </li>`
-            } else {
-                div.innerHTML = `<li class="listItem">
-                <div class="left">
-                    <div class="checkbox"><i class="fa-regular fa-square"></i></div>
-                    <div class="listItemName">${item._name}</div>
-                </div>
-                <div class="right">
-                    <div class="listItemDate">No Due Date</div>
-                    <div class="itemX"><i class="fa-solid fa-xmark"></i></div>
-                </div>
-                <div hidden>${project._name}</div>
-                </li>`
-            }
-            
-            div.querySelector(".checkbox").addEventListener("click", function(e) {
-                toggleCheckBox(item,e);
-            });
-            div.querySelector(".listItemName").addEventListener("click", openDescription);
-            div.querySelector(".itemX").addEventListener("click", function(e) {
-                deleteTask(item, e);
-            });
-            console.log(item._date);
-            if (item._date) {
-                var dateObj = new Date(item._date);
-                var listItemDate = div.querySelector(".listItemDate");
-                listItemDate.innerHTML = `${format(dateObj, "do MMM, yyyy")}`;
-                if (isPast(dateObj)) {
-                    div.querySelector(".listItem").classList.add("pastDue");
-                    listItemDate.insertAdjacentHTML("afterbegin", "PAST DUE   ");
-                }
-            }
+            var div = loadTask(item, project);
 
             tabContentList.appendChild(div);
     
@@ -118,10 +145,78 @@ function loadProject(project) {
     }
 }
 
+function loadTask(item, project) {
+    const div = document.createElement("div");
+    if (item._done == true) {
+        div.innerHTML = `<li class="listItem">
+            <div class="left">
+                <div class="checkbox"><i class="fa-regular fa-square-check"></i></div>
+                <div class="listItemName">${item._name}</div>
+            </div>
+            <div class="right">
+                <div class="listItemDate">No Due Date</div>
+                <div class="itemX"><i class="fa-solid fa-xmark"></i></div>
+            </div>
+            <div hidden>${project._name}</div>
+        </li>`
+    } else {
+        div.innerHTML = `<li class="listItem">
+        <div class="left">
+            <div class="checkbox"><i class="fa-regular fa-square"></i></div>
+            <div class="listItemName">${item._name}</div>
+        </div>
+        <div class="right">
+            <div class="listItemDate">No Due Date</div>
+            <div class="itemX"><i class="fa-solid fa-xmark"></i></div>
+        </div>
+        <div hidden>${project._name}</div>
+        </li>`
+    }
+    
+    div.querySelector(".checkbox").addEventListener("click", function(e) {
+        toggleCheckBox(item,e);
+    });
+    div.querySelector(".listItemName").addEventListener("click", openDescription);
+    div.querySelector(".itemX").addEventListener("click", function(e) {
+        deleteTask(item, e);
+    });
+    if (item._date) {
+        var dateObj = new Date(item._date);
+        var listItemDate = div.querySelector(".listItemDate");
+        listItemDate.innerHTML = `${format(dateObj, "do MMM, yyyy")}`;
+        if (isPast(dateObj) && !isSameDay(dateObj, new Date())) {
+            div.querySelector(".listItem").classList.add("pastDue");
+            listItemDate.insertAdjacentHTML("afterbegin", "PAST DUE   ");
+        }
+    }
+
+    return div;
+};
+
 //delete task
+//add delete descrip if added
 function deleteTask(task, e) {
+    if(e.currentTarget.parentElement.parentElement.parentElement.querySelector(".descripDiv")) {
+        e.currentTarget.parentElement.parentElement.parentElement.querySelector(".descripDiv").remove();
+    };
+
     e.currentTarget.parentElement.parentElement.remove();
     delTaskStorage(task);
+
+    const todayProject = getProject("Today");
+    const weekProject = getProject("This Week");
+    
+    if (containsObject(task, weekProject._list)) {
+        let index = weekProject._list.map(function(x) {return x._name;}).indexOf(task._name);
+        weekProject._list.splice(index,1);
+        storeProject(weekProject);
+        if(containsObject(task, todayProject._list)) {
+            let indexT = todayProject._list.map(function(x) {return x._name;}).indexOf(task._name);
+            todayProject._list.splice(indexT,1);
+            storeProject(todayProject);
+        }
+    };
+    
 }
 
 //Open Description
@@ -148,7 +243,6 @@ function openDescription(e) {
             e.currentTarget.classList.add("descripOpen");
         }
     }
-
 }
 
 //form submissions
@@ -207,8 +301,7 @@ function toggleCheckBox(task,e) {
         e.currentTarget.innerHTML = `<i class="fa-regular fa-square"></i>`;
         task._done = false;
         saveTask(task);
-    }
-    
+    }    
 }
 
 
