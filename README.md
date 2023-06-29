@@ -14,13 +14,15 @@ To-Do List Website made from the [Odin Project's](https://www.theodinproject.com
 - HTML
 
 ## Getting started
-
+1. Clone the repository and install the appropriate modules
 ```
 git clone https://github.com/skim2264/To-Do-List.git
 cd To-Do-List
 npm install
-npm run start
+npm run build
 ```
+2. Open the index.html in your browser to view the website
+
 ## Features
 1. **Create and Manage Lists:** Easily create new lists to organize your tasks and keep them structured.
 2. **Add Tasks with Details:** Add tasks within each list, providing essential information such as task name, due date, and description for effective task management.
